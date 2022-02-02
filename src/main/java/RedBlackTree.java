@@ -197,38 +197,96 @@ public class RedBlackTree extends BinaryTree{
         return root;
     }
 
-    /*
     public RedBlackNode remove(Comparable x){
         if (root == null){
             return null;
         } else if (root.getValue() == x){
+            RedBlackNode temp = root;
             if (root.left() == null && root.right() == null){
-                RedBlackNode temp = root;
                 root = null;
-                return temp;
             } else if (root.right() == null){
-                RedBlackNode temp = root;
                 root = root.left();
                 temp.setLeft(null);
-                return temp;
             } else if (root.left() == null){
-                RedBlackNode temp = root;
                 root = root.right();
                 temp.setRight(null);
-                return temp;
             } else {
+                RedBlackNode successor = successor(root);
+                swap(successor, root);
+                if (successor == root.right()){
+                    root.setRight(successor.right());
+                    successor.setRight(null);
+                    if (!silence)
+                        System.out.println("Removed " + x);
+                    return successor;
+                } else {
+                    return remove(root.right(), successor.getValue());
+                }
             }
+            if (!silence)
+                System.out.println("Removed " + x);
+            checkRoot();
+            return temp;
         } else {
             return remove(root, x);
         }
     }
 
-    private RedBlackNode remove(RedBlackNode par, Comparable x){
-        return null;
+    private RedBlackNode successor(RedBlackNode x){
+        return ((RedBlackNode) super.successor(x));
     }
 
+    private RedBlackNode remove(RedBlackNode par, Comparable x){
+        RedBlackNode parent = search(par, x);
+        if (parent == null){
+            return null;
+        }
+
+        boolean isLeft = parent.left() != null && parent.left() == x;
+
+        System.out.println(isLeft);
+
+        RedBlackNode node = isLeft ? parent.left() : parent.right();
+
+        if (node.left() == null && node.right() == null){
+            if (isLeft){
+                parent.setLeft(null);
+            } else {
+                parent.setRight(null);
+            }
+        } else if (node.left() == null){
+            if (isLeft){
+                parent.setLeft(node.right());
+            } else {
+                parent.setRight(node.right());
+            }
+            node.setRight(null);
+        } else if (node.right() == null){
+            if (isLeft){
+                parent.setLeft(node.left());
+            } else {
+                parent.setRight(node.left());
+            }
+            node.setLeft(null);
+        } else {
+            RedBlackNode successor = successor(node);
+            swap(successor, node);
+            if (successor == node.right()){
+                node.setRight(successor.right());
+                successor.setRight(null);
+                return successor;
+            }
+            return remove(node.right(), x);
+        }
+        System.out.println("Removed " + x);
+        return node;
+    }
+
+    private RedBlackNode search(RedBlackNode par, Comparable x){
+        return ((RedBlackNode) super.search(par, x));
+    }
     /*
-    
+
     private void add(RedBlackNode par, Comparable x){
         checkColorSwap(par);
         if (x.compareTo(par.getValue()) < 0){

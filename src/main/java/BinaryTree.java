@@ -142,4 +142,113 @@ public class BinaryTree {
         return -1;
     }
 
+    public BinaryNode remove(Comparable target) {
+        if (root == null) {
+            return null;
+        }
+
+        if (root.getValue().equals(target)) {
+            if (root.left() == null && root.right() == null) {
+                BinaryNode temp = root;
+                root = null;
+                return temp;
+            } else if (root.left() == null) {
+                BinaryNode temp = root;
+                BinaryNode right = root.right();
+                root.setRight(null);
+                root = right;
+                return temp;
+            } else if (root.right() == null) {
+                BinaryNode temp = root;
+                BinaryNode left = root.left();
+                root.setLeft(null);
+                root = left;
+                return temp;
+            } else {
+                BinaryNode successor = successor(root);
+                swap(root, successor);
+                if (root.right() == successor) {
+                    root.setRight(successor.right());
+                    successor.setRight(null);
+                    return successor;
+                }
+                return remove(root.right(), target);
+            }
+        } else {
+            return remove(root, target);
+        }
+    }
+
+
+    public BinaryNode remove(BinaryNode par, Comparable target){
+        BinaryNode parent = search(par, target);
+        if (parent == null){
+            return null;
+        }
+
+        boolean isLeft = parent.left() != null && parent.left() == target;
+
+        BinaryNode node = isLeft ? parent.left() : parent.right();
+
+        if (node.left() == null && node.right() == null){
+            if (isLeft){
+                parent.setLeft(null);
+            } else {
+                parent.setRight(null);
+            }
+        } else if (node.left() == null){
+            if (isLeft){
+                parent.setLeft(node.right());
+            } else {
+                parent.setRight(node.right());
+            }
+            node.setRight(null);
+        } else if (node.right() == null){
+            if (isLeft){
+                parent.setLeft(node.left());
+            } else {
+                parent.setRight(node.left());
+            }
+            node.setLeft(null);
+        } else {
+            BinaryNode successor = successor(node);
+            swap(successor, node);
+            if (successor == node.right()){
+                node.setRight(successor.right());
+                successor.setRight(null);
+                return successor;
+            }
+            return remove (node.right(), target);
+        }
+        return node;
+    }
+
+    protected BinaryNode successor(BinaryNode x){
+        BinaryNode temp = x.right();
+        while (temp.left() != null){
+            temp = temp.left();
+        }
+        return temp;
+    }
+
+    protected void swap(BinaryNode x, BinaryNode y){
+        Comparable value = x.getValue();
+        x.setValue(y.getValue());
+        y.setValue(value);
+    }
+
+
+    public BinaryNode search(BinaryNode par, Comparable target){
+        if (par == null){
+            return null;
+        }
+        if (par.left() != null && par.left().getValue() == target || par.right() != null && par.right().getValue() == target){
+            return par;
+        } else if (par.getValue().compareTo(target) > 0){
+            return search(par.left(), target);
+        } else {
+            return search(par.right(), target);
+        }
+    }
+
 }

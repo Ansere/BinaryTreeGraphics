@@ -12,6 +12,10 @@ public class BinaryNode implements Comparable{
         return value;
     }
 
+    public void setValue(Comparable x){
+        value = x;
+    }
+
     public BinaryNode left() {
         return left;
     }

@@ -117,6 +117,8 @@ public class BinaryTreeApp extends Application {
     public static void refreshDisplay(){
         Set<BinaryNode> nodeSet = tree.getNodes();
 
+        System.out.println(nodeSet);
+
         int treeHeight = tree.getHeight();
         int treeSize = tree.getSize();
 
@@ -161,13 +163,23 @@ public class BinaryTreeApp extends Application {
                 if (customNumList.size() == 0){
                     addRandomValue();
                 } else {
-                    addValue();
+                    if (index < customNumList.size()) {
+                        addValue();
+                    } else if (customNumList.size() > 0){
+                        removeValue();
+                    }
                 }
                 refreshDisplay();
             }
         });
         primaryStage.setScene(s);
         primaryStage.show();
+    }
+
+    private static void removeValue() {
+        Integer i = customNumList.remove(customNumList.size() - 1);
+        System.out.println("Removing: " + i);
+        System.out.println(tree.remove(i));
     }
     /*
 
