@@ -9,6 +9,12 @@ public class RedBlackNode extends BinaryNode{
         parent = null;
     }
 
+    public RedBlackNode(Comparable value, int color){
+        super(value);
+        this.color = color;
+        parent = null;
+    }
+
     public int getColor() {
         return color;
     }

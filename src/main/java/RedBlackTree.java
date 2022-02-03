@@ -250,9 +250,17 @@ public class RedBlackTree extends BinaryTree{
 
         if (node.left() == null && node.right() == null){
             if (isLeft){
-                parent.setLeft(null);
+                if (node.getColor() == 1){
+                    parent.setLeft(new RedBlackNode(null, 2));
+                } else {
+                    parent.setLeft(null);
+                }
             } else {
-                parent.setRight(null);
+                if (node.getColor() == 1){
+                    parent.setRight(new RedBlackNode(null, 2));
+                } else {
+                    parent.setRight(null);
+                }
             }
         } else if (node.left() == null){
             if (isLeft){

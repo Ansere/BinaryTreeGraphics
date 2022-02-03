@@ -1,7 +1,4 @@
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class BinaryTree {
 
@@ -63,7 +60,12 @@ public class BinaryTree {
         }
     }
 
-    public Set<BinaryNode> getNodes(){
+    public List<BinaryNode> getNodes(){
+        if (getRoot() == null){
+            return new ArrayList<>();
+        }
+        return inOrderTraversal(getRoot());
+        /*
         Queue<BinaryNode> queue = new LinkedList<>();
         Set<BinaryNode> nodes = new TreeSet<>();
         nodes.add(getRoot());
@@ -80,6 +82,19 @@ public class BinaryTree {
             }
         }
         return nodes;
+
+         */
+    }
+
+    private List<BinaryNode> inOrderTraversal(BinaryNode par){
+        List<BinaryNode> list = new ArrayList<>();
+        if (par == null){
+            return list;
+        }
+        list.addAll(inOrderTraversal(par.left()));
+        list.add(par);
+        list.addAll(inOrderTraversal(par.right()));
+        return list;
     }
 
     public int getWidth(){

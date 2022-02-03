@@ -115,9 +115,9 @@ public class BinaryTreeApp extends Application {
     }
 
     public static void refreshDisplay(){
-        Set<BinaryNode> nodeSet = tree.getNodes();
+        List<BinaryNode> nodeList = tree.getNodes();
 
-        System.out.println(nodeSet);
+        System.out.println(nodeList);
 
         int treeHeight = tree.getHeight();
         int treeSize = tree.getSize();
@@ -129,7 +129,6 @@ public class BinaryTreeApp extends Application {
 
         AnchorPane ap = new AnchorPane();
         Queue<BinaryNode> queue = new LinkedList<>();
-        List<BinaryNode> nodeList = new ArrayList<>(nodeSet);
         queue.add(tree.getRoot());
         while (!queue.isEmpty()){
             BinaryNode node = queue.remove();
@@ -144,11 +143,14 @@ public class BinaryTreeApp extends Application {
         }
 
         int columnIndex = 0;
-        for (BinaryNode node : nodeSet){
+        for (BinaryNode node : nodeList){
             Paint color = ((RedBlackNode) node).getColor() == 0 ? Color.RED : Color.BLACK;
             StackPane sp = new StackPane();
             Circle c = new Circle(CELL_HEIGHT/2, Color.WHITE);
             c.setStroke(color);
+            if (((RedBlackNode) node).getColor() == 2){
+                c.setStrokeWidth(5);
+            }
             Text t = new Text(node.getValue() + " ");
             t.setFill(color);
             sp.getChildren().addAll(c, t);
@@ -177,9 +179,12 @@ public class BinaryTreeApp extends Application {
     }
 
     private static void removeValue() {
-        Integer i = customNumList.remove(customNumList.size() - 1);
+        Scanner sc = new Scanner(System.in);
+        Integer i = Integer.parseInt(sc.nextLine());
+        //Integer i = customNumList.remove(customNumList.size() - 1);
         System.out.println("Removing: " + i);
         System.out.println(tree.remove(i));
+        refreshDisplay();
     }
     /*
 
