@@ -10,6 +10,8 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class BinaryTreeApp extends Application {
@@ -25,12 +27,17 @@ public class BinaryTreeApp extends Application {
     private static boolean preferZeroHoriz = true;
     private static boolean preferZeroVert = true;
 
-    private static RedBlackTree tree;
+    private static BinaryTree tree;
 
     private static Stage primaryStage;
 
     private static ArrayList<Integer> customNumList = new ArrayList<>();
     private static int index = 0;
+
+    private static ArrayList<Boolean> instructionType = new ArrayList<>();
+    private static ArrayList<ArrayList<Integer>> lists = new ArrayList<>();
+    private static int listIndex = 0;
+    private static int inListIndex = 0;
 
     private static Set<Integer> set;
 
@@ -44,43 +51,41 @@ public class BinaryTreeApp extends Application {
 
         this.primaryStage = primaryStage;
 
-        FileChooser fileChooser = new FileChooser();
+        FileChooser fc = new FileChooser();
+        //fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input files", ".in"));
+        File selectedFile = fc.showOpenDialog(primaryStage);
 
-        /*
-        fileChooser.setTitle("Open value file");
-        fileChooser.showOpenDialog(primaryStage);
-
-         */
-
-        System.out.println("Input a list of numbers or leave it empty for randomized numbers");
-        Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine();
-        if (!input.isEmpty()){
-            String[] ints = input.split(" ");
-            for (String k : ints){
-                customNumList.add(Integer.parseInt(k));
+        try {
+            TreeInputReader ti = new TreeInputReader(selectedFile);
+            instructionType = ti.getInstructionList();
+            lists = ti.getLists();
+            if (ti.getTreeType().equals("rbt")){
+                tree = new RedBlackTreeParented(false);
+            } else {
+                tree = new BinaryTree();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
         }
 
 
         set = new LinkedHashSet<>();
 
-        tree = new RedBlackTree(false);
-
-        if (customNumList.size() == 0){
+        if (lists.size() == 0){
             addRandomValue();
         } else {
-            addValue();
+            doInstruction();
         }
         refreshDisplay();
 
 
         primaryStage.getScene().setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.RIGHT){
-                if (customNumList.size() == 0){
+                if (lists.size() == 0){
                     addRandomValue();
                 } else {
-                    addValue();
+                    doInstruction();
                 }
                 refreshDisplay();
             }
@@ -90,9 +95,23 @@ public class BinaryTreeApp extends Application {
 
     }
 
-    private static void addValue() {
-        if (index < customNumList.size()){
-            tree.add(customNumList.get(index++));
+    private static void doInstruction() {
+        if (listIndex == lists.size()){
+            return;
+        }
+        if (instructionType.get(listIndex)){
+            System.out.println("Adding: " + lists.get(listIndex).get(inListIndex));
+            tree.add(lists.get(listIndex).get(inListIndex));
+            System.out.println();
+        } else {
+            System.out.println("Removing: " + lists.get(listIndex).get(inListIndex));
+            tree.remove(lists.get(listIndex).get(inListIndex));
+            System.out.println();
+        }
+        inListIndex++;
+        if (inListIndex == lists.get(listIndex).size()) {
+            listIndex++;
+            inListIndex = 0;
         }
     }
 
@@ -116,8 +135,6 @@ public class BinaryTreeApp extends Application {
 
     public static void refreshDisplay(){
         List<BinaryNode> nodeList = tree.getNodes();
-
-        System.out.println(nodeList);
 
         int treeHeight = tree.getHeight();
         int treeSize = tree.getSize();
@@ -144,15 +161,18 @@ public class BinaryTreeApp extends Application {
 
         int columnIndex = 0;
         for (BinaryNode node : nodeList){
-            Paint color = ((RedBlackNode) node).getColor() == 0 ? Color.RED : Color.BLACK;
             StackPane sp = new StackPane();
             Circle c = new Circle(CELL_HEIGHT/2, Color.WHITE);
-            c.setStroke(color);
-            if (((RedBlackNode) node).getColor() == 2){
-                c.setStrokeWidth(5);
-            }
+            c.setStroke(Color.BLACK);
             Text t = new Text(node.getValue() + " ");
-            t.setFill(color);
+            if (node instanceof RedBlackNode){
+                Paint color = ((RedBlackNode) node).getColor() == 0 ? Color.RED : Color.BLACK;
+                c.setStroke(color);
+                if (((RedBlackNode) node).getColor() == 2){
+                    c.setStrokeWidth(5);
+                }
+                t.setFill(color);
+            }
             sp.getChildren().addAll(c, t);
             sp.setLayoutX(colToX(columnIndex++) - CELL_HEIGHT/2.);
             sp.setLayoutY(rowToY(tree.getLevel(node.getValue())) - CELL_HEIGHT/2.);
@@ -162,29 +182,16 @@ public class BinaryTreeApp extends Application {
         Scene s = new Scene(ap, WIDTH, HEIGHT);
         s.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.RIGHT){
-                if (customNumList.size() == 0){
+                if (lists.size() == 0){
                     addRandomValue();
                 } else {
-                    if (index < customNumList.size()) {
-                        addValue();
-                    } else if (customNumList.size() > 0){
-                        removeValue();
-                    }
+                    doInstruction();
                 }
                 refreshDisplay();
             }
         });
         primaryStage.setScene(s);
         primaryStage.show();
-    }
-
-    private static void removeValue() {
-        Scanner sc = new Scanner(System.in);
-        Integer i = Integer.parseInt(sc.nextLine());
-        //Integer i = customNumList.remove(customNumList.size() - 1);
-        System.out.println("Removing: " + i);
-        System.out.println(tree.remove(i));
-        refreshDisplay();
     }
     /*
 

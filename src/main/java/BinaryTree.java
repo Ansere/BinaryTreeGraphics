@@ -21,7 +21,7 @@ public class BinaryTree {
     }
 
     private void add(BinaryNode par, BinaryNode x){
-        if (par.getValue().compareTo(x.getValue()) < 0){
+        if (par.getValue().compareTo(x.getValue()) > 0){
             if (par.left() == null){
                 par.setLeft(x);
             } else {
@@ -197,11 +197,12 @@ public class BinaryTree {
 
     public BinaryNode remove(BinaryNode par, Comparable target){
         BinaryNode parent = search(par, target);
+        System.out.println(parent);
         if (parent == null){
             return null;
         }
 
-        boolean isLeft = parent.left() != null && parent.left() == target;
+        boolean isLeft = parent.left() != null && parent.left().getValue().compareTo(target) == 0;
 
         BinaryNode node = isLeft ? parent.left() : parent.right();
 
@@ -257,7 +258,7 @@ public class BinaryTree {
         if (par == null){
             return null;
         }
-        if (par.left() != null && par.left().getValue() == target || par.right() != null && par.right().getValue() == target){
+        if (par.left() != null && par.left().getValue().compareTo(target) == 0|| par.right() != null && par.right().getValue().compareTo(target) == 0){
             return par;
         } else if (par.getValue().compareTo(target) > 0){
             return search(par.left(), target);

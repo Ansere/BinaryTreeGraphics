@@ -1,13 +1,20 @@
 public class RedBlackTree extends BinaryTree{
 
-    private RedBlackNode root;
-    private boolean silence;
+    protected RedBlackNode root;
+    protected boolean silence;
 
-    private int colorSwapNum = 0;
-    private int leftLeftNum = 0;
-    private int leftRightNum = 0;
-    private int rightLeftNum = 0;
-    private int rightRightNum = 0;
+    protected int colorSwapNum = 0;
+    protected int leftLeftNum = 0;
+    protected int leftRightNum = 0;
+    protected int rightLeftNum = 0;
+    protected int rightRightNum = 0;
+    protected int rightRightRestructure = 0;
+    protected int rightLeftRestructure = 0;
+    protected int leftRightRestructure = 0;
+    protected int leftLeftRestructure = 0;
+    protected int recolor = 0;
+    protected int adjustmentLeft = 0;
+    protected int adjustmentRight = 0;
 
     public RedBlackTree(boolean s){
         root = null;
@@ -42,12 +49,11 @@ public class RedBlackTree extends BinaryTree{
             } else {
                 RedBlackNode node = new RedBlackNode(x);
                 p.setLeft(node);
+                checkRotations(a, g, p, node);
                 if (!silence) {
                     System.out.println("Added " + x + " under " + p.getValue());
-                }
-                checkRotations(a, g, p, node);
-                if (!silence)
                     System.out.println();
+                }
             }
         } else {
             if (p.right() != null){
@@ -55,12 +61,11 @@ public class RedBlackTree extends BinaryTree{
             } else {
                 RedBlackNode node = new RedBlackNode(x);
                 p.setRight(node);
-                if (!silence){
-                    System.out.println("Added " + x + " under " + p.getValue());
-                }
                 checkRotations(a, g, p, node);
-                if (!silence)
+                if (!silence) {
+                    System.out.println("Added " + x + " under " + p.getValue());
                     System.out.println();
+                }
             }
         }
     }
@@ -181,13 +186,13 @@ public class RedBlackTree extends BinaryTree{
         rightRightRotation(a, g, x);
     }
     
-    private void checkRoot(){
-        if (root.getColor() == 0){
+    protected void checkRoot(){
+        if (root.getColor() != 1){
             root.setColor(1);
         }
     }
 
-    private void colorSwap(RedBlackNode par){
+    protected void colorSwap(RedBlackNode par){
         par.setColor(par.getColor() - 1);
         par.left().setColor(par.left().getColor() + 1);
         par.right().setColor(par.right().getColor() + 1);
@@ -232,7 +237,7 @@ public class RedBlackTree extends BinaryTree{
         }
     }
 
-    private RedBlackNode successor(RedBlackNode x){
+    protected RedBlackNode successor(RedBlackNode x){
         return ((RedBlackNode) super.successor(x));
     }
 
@@ -241,41 +246,14 @@ public class RedBlackTree extends BinaryTree{
         if (parent == null){
             return null;
         }
-
         boolean isLeft = parent.left() != null && parent.left() == x;
 
         System.out.println(isLeft);
 
         RedBlackNode node = isLeft ? parent.left() : parent.right();
 
-        if (node.left() == null && node.right() == null){
-            if (isLeft){
-                if (node.getColor() == 1){
-                    parent.setLeft(new RedBlackNode(null, 2));
-                } else {
-                    parent.setLeft(null);
-                }
-            } else {
-                if (node.getColor() == 1){
-                    parent.setRight(new RedBlackNode(null, 2));
-                } else {
-                    parent.setRight(null);
-                }
-            }
-        } else if (node.left() == null){
-            if (isLeft){
-                parent.setLeft(node.right());
-            } else {
-                parent.setRight(node.right());
-            }
-            node.setRight(null);
-        } else if (node.right() == null){
-            if (isLeft){
-                parent.setLeft(node.left());
-            } else {
-                parent.setRight(node.left());
-            }
-            node.setLeft(null);
+        if (node.left() == null || node.right() == null){
+            checkColor(node);
         } else {
             RedBlackNode successor = successor(node);
             swap(successor, node);
@@ -290,181 +268,16 @@ public class RedBlackTree extends BinaryTree{
         return node;
     }
 
-    private RedBlackNode search(RedBlackNode par, Comparable x){
+    protected void checkColor(RedBlackNode node) {
+
+    }
+
+    protected RedBlackNode search(RedBlackNode par, Comparable x){
         return ((RedBlackNode) super.search(par, x));
     }
     /*
 
-    private void add(RedBlackNode par, Comparable x){
-        checkColorSwap(par);
-        if (x.compareTo(par.getValue()) < 0){
-            if (par.left() != null){
-                add(par.left(), x);
-            } else {
-                RedBlackNode node = new RedBlackNode(x);
-                par.setLeft(node);
-                node.setParent(par);
-                if (!silence) {
-                    System.out.println("Added " + x + " under " + par.getValue());
-                }
-                checkRotations(node);
-                if (!silence)
-                    System.out.println();
-            }
-        } else {
-            if (par.right() != null){
-                add(par.right(), x);
-            } else {
-                RedBlackNode node = new RedBlackNode(x);
-                par.setRight(node);
-                node.setParent(par);
-                if (!silence){
-                    System.out.println("Added " + x + " under " + par.getValue());
-                }
-                checkRotations(node);
-                if (!silence)
-                    System.out.println();
-            }
-        }
-    }
 
-
-    private void checkColorSwap(RedBlackNode par){
-        if (par.getColor() == 0 || par.left() == null || par.right() == null){
-            return;
-        }
-        if (par.left().getColor() == 0 && par.right().getColor() == 0){
-            if (!silence){
-                System.out.println("Color swap!");
-            }
-            colorSwap(par);
-            checkRoot();
-            checkRotations(par);
-        }
-    }
-
-    private void checkRotations(RedBlackNode x){
-        RedBlackNode p = x.getParent();
-        if (p == null){
-            return;
-        }
-        RedBlackNode g = p.getParent();
-        if (g == null){
-            return;
-        }
-        if (x.getColor() == 1 || p.getColor() == 1){
-            return;
-        }
-        if (!silence) {
-            System.out.println(g);
-            System.out.println(p);
-            System.out.println(x);
-        }
-        boolean parLeft = g.left() == p;
-        boolean xLeft = p.left() == x;
-
-        if (parLeft ^ xLeft){ //outside-inside
-            if (parLeft){
-                leftRightRotation(g, p, x);
-                if (!silence)
-                    System.out.println("Left-right!");
-            } else {
-                rightLeftRotation(g, p, x);
-                if (!silence)
-                    System.out.println("Right-left!");
-            }
-        } else { //outside-outside
-            if (parLeft){
-                leftLeftRotation(g, p);
-                if (!silence)
-                    System.out.println("Left-left!");
-            } else {
-                rightRightRotation(g, p);
-                if (!silence)
-                    System.out.println("Right-right!");
-            }
-        }
-    }
-
-    private void rightRightRotation(RedBlackNode g, RedBlackNode p){
-        if (!silence) {
-            System.out.println(g);
-            System.out.println(p);
-        }
-        g.setRight(p.left());
-        if (p.left() != null){
-            p.left().setParent(g);
-        }
-        p.setLeft(g);
-        p.setParent(a);
-        if (a == null){
-            root = p;
-        } else if (a.left() == g){
-            a.setLeft(p);
-        } else {
-            a.setRight(p);
-        }
-        g.setParent(p);
-        p.setColor(p.getColor() + 1);
-        g.setColor(g.getColor() - 1);
-    }
-
-    private void leftLeftRotation(RedBlackNode g, RedBlackNode p){
-        if (!silence) {
-            System.out.println(g);
-            System.out.println(p);
-        }
-        g.setLeft(p.right());
-        if (p.right() != null) {
-            p.right().setParent(g);
-        }
-        p.setRight(g);
-        p.setParent(a);
-        if (a == null){
-            root = p;
-        } else if (a.left() == g){
-            a.setLeft(p);
-        } else {
-            a.setRight(p);
-        }
-        g.setParent(p);
-        p.setColor(p.getColor() + 1);
-        g.setColor(g.getColor() - 1);
-    }
-
-    private void leftRightRotation(RedBlackNode g, RedBlackNode p, RedBlackNode x){
-        if (!silence) {
-            System.out.println(g);
-            System.out.println(p);
-            System.out.println(x);
-        }
-        p.setRight(x.left());
-        if (x.left() != null){
-            x.left().setParent(p);
-        }
-        x.setLeft(p);
-        x.setParent(g);
-        g.setLeft(x);
-        p.setParent(x);
-        leftLeftRotation(g, x);
-    }
-
-    private void rightLeftRotation(RedBlackNode g, RedBlackNode p, RedBlackNode x){
-        if (!silence) {
-            System.out.println(g);
-            System.out.println(p);
-            System.out.println(x);
-        }
-        p.setLeft(x.right());
-        if (x.right() != null){
-            x.right().setParent(p);
-        }
-        x.setRight(p);
-        x.setParent(g);
-        g.setRight(x);
-        p.setParent(x);
-        rightRightRotation(g, x);
-    }
 
 
      */

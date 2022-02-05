@@ -33,7 +33,7 @@ public class BinaryNode implements Comparable{
     }
 
     public String toString(){
-        return "Value: " + value +
+        return "Value: " + (value == null ? "Double-black null" : value) +
                 (left != null ? "; Left: " + left.getValue(): "") +
                 (right != null ? "; Right: " + right.getValue(): "");
     }
