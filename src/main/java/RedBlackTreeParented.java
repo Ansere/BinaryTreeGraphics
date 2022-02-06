@@ -294,7 +294,7 @@ public class RedBlackTreeParented extends RedBlackTree{
                 }
                 checkColorSwap(p.getParent(), true);
             } else if (s != null && s.getColor() == 1){
-                if (s.right() != null && s.right().getColor() == 0){
+                if (s.right() != null && s.right().getColor() == 0 && (isLeft || s.left() == null)){
                     if (isLeft){
                         if (!silence) {
                             System.out.println("rightRightRestructure #" + ++rightRightRestructure);

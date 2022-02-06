@@ -197,7 +197,6 @@ public class BinaryTree {
 
     public BinaryNode remove(BinaryNode par, Comparable target){
         BinaryNode parent = search(par, target);
-        System.out.println(parent);
         if (parent == null){
             return null;
         }
