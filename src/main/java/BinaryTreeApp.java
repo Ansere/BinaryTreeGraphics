@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
@@ -61,8 +62,10 @@ public class BinaryTreeApp extends Application {
             lists = ti.getLists();
             if (ti.getTreeType().equals("rbt")){
                 tree = new RedBlackTreeParented(false);
-            } else {
+            } else if (ti.getTreeType().equals("bin")) {
                 tree = new BinaryTree();
+            } else {
+                tree = new AVLTree();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,6 +168,7 @@ public class BinaryTreeApp extends Application {
             Circle c = new Circle(CELL_HEIGHT/2, Color.WHITE);
             c.setStroke(Color.BLACK);
             Text t = new Text(node.getValue() + " ");
+            sp.getChildren().addAll(c, t);
             if (node instanceof RedBlackNode){
                 Paint color = ((RedBlackNode) node).getColor() == 0 ? Color.RED : Color.BLACK;
                 c.setStroke(color);
@@ -172,8 +176,11 @@ public class BinaryTreeApp extends Application {
                     c.setStrokeWidth(5);
                 }
                 t.setFill(color);
+            } else if (node instanceof AVLNode){
+                Text bf = new Text(((AVLNode) node).getBalanceFactor() + "");
+                sp.getChildren().add(bf);
+                StackPane.setAlignment(bf, Pos.TOP_CENTER);
             }
-            sp.getChildren().addAll(c, t);
             sp.setLayoutX(colToX(columnIndex++) - CELL_HEIGHT/2.);
             sp.setLayoutY(rowToY(tree.getLevel(node.getValue())) - CELL_HEIGHT/2.);
             ap.getChildren().add(sp);

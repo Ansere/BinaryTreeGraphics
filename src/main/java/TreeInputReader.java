@@ -10,7 +10,7 @@ public class TreeInputReader {
     private ArrayList<Boolean> instructionList;
     private ArrayList<ArrayList<Integer>> lists;
     private String treeType;
-    private List<String> treeTypes = Arrays.asList("bin", "rbt");
+    private List<String> treeTypes = Arrays.asList("bin", "rbt", "avl");
 
     public TreeInputReader(File f) throws IOException, FileTooShortException, IllegalTreeTypeException {
         sc = new Scanner(f);

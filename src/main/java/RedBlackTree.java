@@ -187,7 +187,7 @@ public class RedBlackTree extends BinaryTree{
     }
     
     protected void checkRoot(){
-        if (root.getColor() != 1){
+        if (root != null && root.getColor() != 1){
             root.setColor(1);
         }
     }

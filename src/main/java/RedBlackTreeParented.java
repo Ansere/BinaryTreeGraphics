@@ -295,6 +295,9 @@ public class RedBlackTreeParented extends RedBlackTree{
                 checkColorSwap(p.getParent(), true);
             } else if (s != null && s.getColor() == 1){
                 if (s.right() != null && s.right().getColor() == 0 && (isLeft || s.left() == null)){
+                    if (x.getParent().getParent() == null){
+                        root = s;
+                    }
                     if (isLeft){
                         if (!silence) {
                             System.out.println("rightRightRestructure #" + ++rightRightRestructure);
@@ -313,6 +316,9 @@ public class RedBlackTreeParented extends RedBlackTree{
                         leftRightRestructure(x.getParent(), s, s.right());
                     }
                 } else if (s.left() != null && s.left().getColor() == 0){
+                    if (x.getParent().getParent() == null){
+                        root = s;
+                    }
                     if (isLeft){
                         if (!silence) {
                             System.out.println("rightLeftRestructure #" + ++rightLeftRestructure);
@@ -340,6 +346,7 @@ public class RedBlackTreeParented extends RedBlackTree{
                     }
                     recolor(p);
                     checkColor(p, false);
+                    return;
                 }
             } else if (s.getColor() == 0){
                 if (isLeft){
@@ -399,10 +406,12 @@ public class RedBlackTreeParented extends RedBlackTree{
         if (c != null) {
              c.setColor(1);
         }
-        if (x.getParent().left() == x) {
-            x.getParent().setLeft(c);
-        } else {
-            x.getParent().setRight(c);
+        if (x.getParent() != null) {
+            if (x.getParent().left() == x) {
+                x.getParent().setLeft(c);
+            } else {
+                x.getParent().setRight(c);
+            }
         }
         c.setParent(x.getParent());
     }
@@ -413,10 +422,12 @@ public class RedBlackTreeParented extends RedBlackTree{
             s.left().setParent(p);
         }
         s.setLeft(p);
-        if (p.getParent().left() == p){
-            p.getParent().setLeft(s);
-        } else {
-            p.getParent().setRight(s);
+        if (p.getParent() != null) {
+            if (p.getParent().left() == p){
+                p.getParent().setLeft(s);
+            } else {
+                p.getParent().setRight(s);
+            }
         }
         s.setParent(p.getParent());
         p.setParent(s);
@@ -450,10 +461,12 @@ public class RedBlackTreeParented extends RedBlackTree{
             s.right().setParent(p);
         }
         s.setRight(p);
-        if (p.getParent().left() == p){
-            p.getParent().setLeft(s);
-        } else {
-            p.getParent().setRight(s);
+        if (p.getParent() != null) {
+            if (p.getParent().left() == p) {
+                p.getParent().setLeft(s);
+            } else {
+                p.getParent().setRight(s);
+            }
         }
         s.setParent(p.getParent());
         p.setParent(s);
